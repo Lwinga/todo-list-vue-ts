@@ -1,11 +1,23 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue';
+import type { Todo } from './types.ts';
+import AddTodo from './AddTodo.vue';
+import TodoList from './TodoList.vue';
+
+const todos = ref<Todo[]>([]);
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <main>
+    <AddTodo v-model="todos" />
+    <TodoList v-model="todos" />
+  </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+main {
+  max-width: 640px;
+  margin-right: auto;
+  margin-left: auto;
+}
+</style>
