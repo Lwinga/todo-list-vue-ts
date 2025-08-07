@@ -13,7 +13,12 @@ const emit = defineEmits<{
 }>();
 
 const isEditing = ref(false);
-const todoText = ref(props.todo.text);
+const todoText = ref('');
+
+function cancelEditTodo() {
+  isEditing.value = false;
+  todoText.value = '';
+}
 
 function deleteTodo(id: number) {
   emit('delete', id);
@@ -26,7 +31,7 @@ function editTodo() {
 
 function saveTodo(id: number) {
   emit('edit', id, todoText.value);
-  isEditing.value = false;
+  cancelEditTodo();
 }
 </script>
 
@@ -38,8 +43,9 @@ function saveTodo(id: number) {
       <span v-else>{{ todo.text }}</span>
       <small>({{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }})</small>
     </div>
-    <div>
-      <button type="button" v-if="!isEditing" @click="editTodo">Edit</button>
+    <div class="actions">
+      <button type="button" v-if="isEditing" @click="cancelEditTodo">Cancel</button>
+      <button type="button" v-else @click="editTodo">Edit</button>
       <button type="button" @click="deleteTodo(todo.id)">Delete</button>
     </div>
   </section>
@@ -57,5 +63,9 @@ section:hover {
 small {
   color: gray;
   margin-left: 8px;
+}
+.actions {
+  display: flex;
+  gap: 4px;
 }
 </style>
