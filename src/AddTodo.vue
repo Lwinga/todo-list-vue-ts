@@ -28,6 +28,7 @@ function addTodo() {
 <style scoped>
 section {
   display: flex;
+  gap: 4px;
   padding: 8px;
 }
 input {
@@ -35,5 +36,7 @@ input {
 }
 button {
   flex-shrink: 0;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 </style>

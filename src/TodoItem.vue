@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 import type { Todo } from './types.ts';
-import { ref, watch } from 'vue';
+import { nextTick, ref, useTemplateRef, watch } from 'vue';
 
 const props = defineProps<{
   todo: Todo;
@@ -16,6 +16,8 @@ const emit = defineEmits<{
 const isEditing = ref(false);
 const todoText = ref('');
 const isDone = ref(props.todo.isDone);
+
+const editInput = useTemplateRef('editInput');
 
 watch(isDone, function(value) {
   setDone(value);
@@ -33,6 +35,7 @@ function deleteTodo() {
 function editTodo() {
   todoText.value = props.todo.text;
   isEditing.value = true;
+  nextTick(() => editInput.value?.focus());
 }
 
 function saveTodo() {
@@ -52,10 +55,14 @@ function setDone(isDone: boolean) {
   <section>
     <div class="content">
       <input type="checkbox" v-model="isDone">
-      <input type="text" v-model="todoText" v-if="isEditing" @keydown.enter="saveTodo" :disabled="isDone">
-      <button type="button" v-if="isEditing" @click="saveTodo" :disabled="isDone">Save</button>
-      <span v-else :class="{ strike: isDone }">{{ todo.text }}</span>
-      <small :class="{ strike: isDone }">({{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }})</small>
+      <template v-if="isEditing">
+        <input type="text" ref="editInput" v-model="todoText" @keydown.enter="saveTodo" :disabled="isDone">
+        <button type="button" @click="saveTodo" :disabled="isDone">Save</button>
+      </template>
+      <template v-else>
+        <span :class="{ strike: isDone }">{{ todo.text }}</span>
+        <small :class="{ strike: isDone }">({{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }})</small>
+      </template>
     </div>
     <div class="actions">
       <button type="button" v-if="isEditing" @click="cancelEditTodo">Cancel</button>
