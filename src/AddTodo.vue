@@ -8,6 +8,7 @@ const todoText = ref('');
 const lastId = ref(0);
 
 function addTodo() {
+  if (todoText.value === '') return;
   todos.value?.push({
     id: ++lastId.value,
     text: todoText.value,
