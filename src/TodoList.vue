@@ -16,12 +16,21 @@ function editTodo(id: number, text: string) {
     return todo;
   });
 }
+
+function setTodoDone(id: number, isDone: boolean) {
+  todos.value = todos.value?.map(todo => {
+    if (todo.id === id) {
+      return { ...todo, isDone };
+    }
+    return todo;
+  });
+}
 </script>
 
 <template>
   <ul>
     <li v-for="todo in todos" :key="todo.id">
-      <TodoItem :todo @delete="deleteTodo" @edit="editTodo" />
+      <TodoItem :todo @delete="deleteTodo" @edit="editTodo" @done="setTodoDone" />
     </li>
   </ul>
 </template>

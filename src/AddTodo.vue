@@ -11,6 +11,7 @@ function addTodo() {
   todos.value?.push({
     id: ++lastId.value,
     text: todoText.value,
+    isDone: false,
     createdAt: Date.now(),
   });
   todoText.value = '';
