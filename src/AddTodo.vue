@@ -2,19 +2,22 @@
 import { ref } from 'vue';
 import type { Todo } from './types.ts';
 
-const todos = defineModel<Todo[]>();
+const todos = defineModel<Todo[]>({ required: true });
 
 const todoText = ref('');
 const lastId = ref(0);
 
 function addTodo() {
   if (todoText.value === '') return;
-  todos.value?.push({
-    id: ++lastId.value,
-    text: todoText.value,
-    isDone: false,
-    createdAt: Date.now(),
-  });
+  todos.value = [
+    ...todos.value,
+    {
+      id: ++lastId.value,
+      text: todoText.value,
+      isDone: false,
+      createdAt: Date.now(),
+    },
+  ];
   todoText.value = '';
 }
 </script>

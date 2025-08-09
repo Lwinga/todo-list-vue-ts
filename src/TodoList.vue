@@ -2,14 +2,14 @@
 import type { Todo } from './types.ts';
 import TodoItem from './TodoItem.vue';
 
-const todos = defineModel<Todo[]>();
+const todos = defineModel<Todo[]>({ required: true });
 
 function deleteTodo(id: number) {
-  todos.value = todos.value?.filter(todo => todo.id !== id);
+  todos.value = todos.value.filter(todo => todo.id !== id);
 }
 
 function editTodo(id: number, text: string) {
-  todos.value = todos.value?.map(todo => {
+  todos.value = todos.value.map(todo => {
     if (todo.id === id) {
       return { ...todo, text };
     }
@@ -18,7 +18,7 @@ function editTodo(id: number, text: string) {
 }
 
 function setTodoDone(id: number, isDone: boolean) {
-  todos.value = todos.value?.map(todo => {
+  todos.value = todos.value.map(todo => {
     if (todo.id === id) {
       return { ...todo, isDone };
     }

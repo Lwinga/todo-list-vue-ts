@@ -3,8 +3,9 @@ import { computed, ref } from 'vue';
 import type { Todo } from './types.ts';
 import AddTodo from './AddTodo.vue';
 import TodoList from './TodoList.vue';
+import { useLocalStorage } from './composables.ts';
 
-const todos = ref<Todo[]>([]);
+const todos = useLocalStorage<Todo[]>('todos', []);
 
 const doneTodos = computed(() => {
   return todos.value.filter(todo => todo.isDone).length;
