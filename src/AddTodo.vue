@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { Todo } from './types.ts';
 
 const todos = defineModel<Todo[]>({ required: true });
 
 const todoText = ref('');
-const lastId = ref(0);
+
+const lastId = computed(() => {
+  // Assumes last todo has the largest id
+  return todos.value.length > 0 ? todos.value[todos.value.length - 1].id : 0;
+});
 
 function addTodo() {
   if (todoText.value === '') return;
   todos.value = [
     ...todos.value,
     {
-      id: ++lastId.value,
+      id: lastId.value + 1,
       text: todoText.value,
       isDone: false,
       createdAt: Date.now(),
