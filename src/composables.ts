@@ -9,7 +9,6 @@ export function useLocalStorage<Type>(key: string, defaultValue: Type) {
   });
 
   watch(data, (dataValue) => {
-    console.log(dataValue);
     localStorage.setItem(key, JSON.stringify(dataValue));
   });
 

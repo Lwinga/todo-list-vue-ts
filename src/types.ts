@@ -5,4 +5,11 @@ interface Todo {
   createdAt: number;
 }
 
-export type { Todo };
+type Filter =
+  | 'today'
+  | 'yesterday'
+  | 'this_week'
+  | 'this_month'
+  | 'all';
+
+export type { Todo, Filter };
