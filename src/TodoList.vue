@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import type { Filter, Todo } from './types.ts';
+import type { Filter, Sort, Todo } from './types.ts';
 import TodoItem from './TodoItem.vue';
 import { computed } from 'vue';
 import { isThisMonth, isThisWeek, isToday, isYesterday } from 'date-fns';
 
 const props = defineProps<{
   filter: Filter;
+  sort: Sort;
 }>();
 
 const todos = defineModel<Todo[]>({ required: true });
@@ -26,6 +27,19 @@ const filteredTodos = computed(() => todos.value.filter(todo => {
     default:
       const _exhaustiveCheck: never = props.filter;
       _exhaustiveCheck;
+  }
+}));
+
+const sortedTodos = computed(() => [...filteredTodos.value].sort((a, b) => {
+  switch(props.sort) {
+    case 'date_asc':
+      return a.createdAt - b.createdAt;
+    case 'date_desc':
+      return b.createdAt - a.createdAt;
+    case 'name_asc':
+      return a.text > b.text ? 1 : a.text === b.text ? 0 : -1;
+    case 'name_desc':
+      return a.text > b.text ? -1 : a.text === b.text ? 0 : 1;
   }
 }));
 
@@ -56,7 +70,7 @@ defineExpose({ filteredTodos });
 
 <template>
   <ul>
-    <li v-for="todo in filteredTodos" :key="todo.id">
+    <li v-for="todo in sortedTodos" :key="todo.id">
       <TodoItem :todo @delete="deleteTodo" @edit="editTodo" @done="setTodoDone" />
     </li>
   </ul>

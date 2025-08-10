@@ -12,4 +12,10 @@ type Filter =
   | 'this_month'
   | 'all';
 
-export type { Todo, Filter };
+type Sort =
+  | 'date_asc'
+  | 'date_desc'
+  | 'name_asc'
+  | 'name_desc'
+
+export type { Todo, Filter, Sort };

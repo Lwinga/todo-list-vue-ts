@@ -7,8 +7,8 @@ const todos = defineModel<Todo[]>({ required: true });
 const todoText = ref('');
 
 const lastId = computed(() => {
-  // Assumes last todo has the largest id
-  return todos.value.length > 0 ? todos.value[todos.value.length - 1].id : 0;
+  const maxId = Math.max(...todos.value.map(todo => todo.id));
+  return isFinite(maxId) ? maxId : 0;
 });
 
 function addTodo() {
