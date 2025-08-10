@@ -21,6 +21,13 @@ const filters = new Map<Filter, String>([
   ['this_month', 'This Month'],
   ['all', 'All'],
 ]);
+
+function clearTodos() {
+  const filteredIds = new Set(todoList.value?.filteredTodos.map(todo => {
+    return todo.id
+  }) ?? [] as number[]);
+  todos.value = todos.value.filter(todo => !filteredIds.has(todo.id));
+}
 </script>
 
 <template>
@@ -29,7 +36,7 @@ const filters = new Map<Filter, String>([
     <select v-model="filter">
       <option v-for="[key, value] in filters" :value="key">{{ value }}</option>
     </select>
-    <button type="button" @click="todos = []">Clear</button>
+    <button type="button" @click="clearTodos">Clear</button>
   </header>
   <main>
     <div>
