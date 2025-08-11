@@ -39,9 +39,9 @@ const sortedTodos = computed(() => [...filteredTodos.value].sort((a, b) => {
     case 'date_desc':
       return b.createdAt - a.createdAt;
     case 'name_asc':
-      return a.text > b.text ? 1 : a.text === b.text ? 0 : -1;
+      return a.text.localeCompare(b.text);
     case 'name_desc':
-      return a.text > b.text ? -1 : a.text === b.text ? 0 : 1;
+      return b.text.localeCompare(a.text);
   }
 }));
 
