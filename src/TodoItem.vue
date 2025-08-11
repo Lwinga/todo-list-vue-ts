@@ -13,8 +13,9 @@ const emit = defineEmits<{
   (e: 'done', id: number, done: boolean): void;
 }>();
 
-const isEditing = ref(false);
-const todoText = ref('');
+const editingId = defineModel<number>({ required: true });
+
+const todoText = ref(props.todo.text);
 const isDone = ref(props.todo.isDone);
 
 const editInput = useTemplateRef('editInput');
@@ -24,7 +25,7 @@ watch(isDone, function(value) {
 });
 
 function cancelEditTodo() {
-  isEditing.value = false;
+  editingId.value = 0;
   todoText.value = '';
 }
 
@@ -33,8 +34,9 @@ function deleteTodo() {
 }
 
 function editTodo() {
+  if (props.todo.isDone) return;
   todoText.value = props.todo.text;
-  isEditing.value = true;
+  editingId.value = props.todo.id;
   nextTick(() => editInput.value?.focus());
 }
 
@@ -45,7 +47,7 @@ function saveTodo() {
 
 function setDone(isDone: boolean) {
   emit('done', props.todo.id, isDone);
-  if (isEditing.value) {
+  if (editingId.value === props.todo.id) {
     cancelEditTodo();
   }
 }
@@ -55,17 +57,17 @@ function setDone(isDone: boolean) {
   <section>
     <div class="content">
       <input type="checkbox" v-model="isDone">
-      <template v-if="isEditing">
+      <template v-if="editingId === todo.id">
         <input type="text" ref="editInput" v-model="todoText" @keydown.enter="saveTodo" :disabled="isDone">
         <button type="button" @click="saveTodo" :disabled="isDone">Save</button>
       </template>
       <template v-else>
-        <span :class="{ strike: isDone }">{{ todo.text }}</span>
+        <span class="todo-text" :class="{ strike: isDone }" @dblclick="editTodo">{{ todo.text }}</span>
         <small :class="{ strike: isDone }">({{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }})</small>
       </template>
     </div>
     <div class="actions">
-      <button type="button" v-if="isEditing" @click="cancelEditTodo">Cancel</button>
+      <button type="button" v-if="editingId === todo.id" @click="cancelEditTodo">Cancel</button>
       <button type="button" v-else @click="editTodo" :disabled="isDone">Edit</button>
       <button type="button" @click="deleteTodo">Delete</button>
     </div>
@@ -96,5 +98,8 @@ small {
 }
 .strike {
   text-decoration: line-through;
+}
+.todo-text {
+  cursor: default;
 }
 </style>

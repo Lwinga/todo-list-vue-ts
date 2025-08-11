@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import type { Sort, Filter, Todo } from './types.ts';
 import AddTodo from './AddTodo.vue';
 import TodoList from './TodoList.vue';
@@ -31,10 +31,23 @@ const sorts = new Map<Sort, string>([
 ]);
 
 function clearTodos() {
-  const filteredIds = new Set(todoList.value?.filteredTodos.map(todo => {
+  const filteredIds = getFilteredIds();
+  todos.value = todos.value.filter(todo => !filteredIds.has(todo.id));
+}
+
+function getFilteredIds(): Set<number> {
+  return new Set(todoList.value?.filteredTodos.map(todo => {
     return todo.id
   }) ?? [] as number[]);
-  todos.value = todos.value.filter(todo => !filteredIds.has(todo.id));
+}
+
+async function processAddTodo(todo: Todo) {
+  await nextTick(); // Wait until filteredTodos has been updated
+  const filteredIds = getFilteredIds();
+  if (!filteredIds.has(todo.id)) {
+    // Avoid frustration to users when they can't see the added todo
+    filter.value = 'today';
+  }
 }
 </script>
 
@@ -53,7 +66,7 @@ function clearTodos() {
   </header>
   <main>
     <div>
-      <AddTodo v-model="todos" />
+      <AddTodo v-model="todos" @add="processAddTodo" />
       <TodoList v-model="todos" :filter :sort ref="todo-list" />
     </div>
   </main>

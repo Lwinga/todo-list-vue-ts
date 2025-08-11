@@ -2,6 +2,10 @@
 import { computed, ref } from 'vue';
 import type { Todo } from './types.ts';
 
+const emit = defineEmits<{
+  (e: 'add', todo: Todo): void;
+}>();
+
 const todos = defineModel<Todo[]>({ required: true });
 
 const todoText = ref('');
@@ -13,16 +17,15 @@ const lastId = computed(() => {
 
 function addTodo() {
   if (todoText.value === '') return;
-  todos.value = [
-    ...todos.value,
-    {
-      id: lastId.value + 1,
-      text: todoText.value,
-      isDone: false,
-      createdAt: Date.now(),
-    },
-  ];
+  const todo = {
+    id: lastId.value + 1,
+    text: todoText.value,
+    isDone: false,
+    createdAt: Date.now(),
+  };
+  todos.value = [...todos.value, todo];
   todoText.value = '';
+  emit('add', todo);
 }
 </script>
 
