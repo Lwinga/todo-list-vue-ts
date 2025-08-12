@@ -30,24 +30,38 @@ function addTodo() {
 </script>
 
 <template>
-  <section>
-    <input type="text" v-model="todoText" @keydown.enter="addTodo">
-    <button type="button" @click="addTodo">Add</button>
-  </section>
+  <div class="add-todo">
+    <input type="text" placeholder="Add a new todo..." v-model="todoText" @keydown.enter="addTodo">
+    <button @click="addTodo"><i class="fa fa-add"></i> Add</button>
+  </div>
 </template>
 
 <style scoped>
-section {
+.add-todo {
   display: flex;
-  gap: 4px;
-  padding: 8px;
+  gap: 10px;
 }
+
 input {
-  flex-grow: 1;
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
 }
+
 button {
-  flex-shrink: 0;
-  padding-left: 16px;
-  padding-right: 16px;
+  background: #00b894;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #009874;
 }
 </style>

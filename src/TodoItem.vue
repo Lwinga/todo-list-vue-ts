@@ -54,52 +54,115 @@ function setDone(isDone: boolean) {
 </script>
 
 <template>
-  <section>
-    <div class="content">
-      <input type="checkbox" v-model="isDone">
+  <tr :class="{ done: isDone }">
+    <td><input type="checkbox" v-model="isDone"></td>
+    <td>
+      <input type='text' class='editing' ref="editInput" v-if="editingId === todo.id" v-model="todoText"
+        @keydown.enter="saveTodo" @keydown.escape="cancelEditTodo" :disabled="isDone">
+      <span v-else @dblclick="editTodo">{{ todo.text }}</span>
+    </td>
+    <td>{{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }}</td>
+    <td>{{ todo.doneAt !== undefined ? format(new Date(todo.doneAt), 'yyy/MM/dd hh:mm:ss') : '-' }}</td>
+    <td class="actions">
       <template v-if="editingId === todo.id">
-        <input type="text" ref="editInput" v-model="todoText" @keydown.enter="saveTodo" :disabled="isDone">
-        <button type="button" @click="saveTodo" :disabled="isDone">Save</button>
+        <button class="save-btn" title="Save" @click="saveTodo" :disabled="isDone">
+          <i class="fa fa-save"></i>
+        </button>
+        <button class="cancel-btn" title="Cancel" v-if="editingId === todo.id" @click="cancelEditTodo">
+          <i class="fa fa-times"></i>
+        </button>
       </template>
       <template v-else>
-        <span class="todo-text" :class="{ strike: isDone }" @dblclick="editTodo">{{ todo.text }}</span>
-        <small :class="{ strike: isDone }">({{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }})</small>
+        <button class="edit-btn" title="Edit" @click="editTodo" :disabled="isDone">
+          <i class="fa fa-edit"></i>
+        </button>
+        <button class="delete-btn" title="Delete" @click="deleteTodo">
+          <i class="fa fa-trash"></i>
+        </button>
       </template>
-    </div>
-    <div class="actions">
-      <button type="button" v-if="editingId === todo.id" @click="cancelEditTodo">Cancel</button>
-      <button type="button" v-else @click="editTodo" :disabled="isDone">Edit</button>
-      <button type="button" @click="deleteTodo">Delete</button>
-    </div>
-  </section>
+    </td>
+  </tr>
 </template>
 
 <style scoped>
-section {
-  display: flex;
-  justify-content: space-between;
-  padding: 4px 8px;
-}
-section:hover {
-  background-color: lightgray;
-}
-small {
+tr.done td {
+  text-decoration: line-through;
   color: gray;
 }
-.content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
+
+tr.done td:hover {
+  text-decoration: none;
 }
-.actions {
-  display: flex;
-  gap: 4px;
+
+td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
 }
-.strike {
-  text-decoration: line-through;
+
+td:not(:first-child, :last-child) {
+  min-width: 100px;
 }
-.todo-text {
-  cursor: default;
+
+td:first-child {
+  width: 60px;
+  text-align: center;
+}
+
+td:last-child {
+  width: 110px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+input.editing {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 4px;
+  outline: none;
+}
+
+input.editing:focus {
+  border: 1px solid #0984e3;
+}
+
+.actions button {
+  border: none;
+  padding: 6px 10px;
+  margin: 0 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.actions button i {
+  margin-right: 0;
+}
+
+.edit-btn {
+  background: #0984e3;
+  color: white;
+}
+
+.delete-btn {
+  background: #d63031;
+  color: white;
+}
+
+.save-btn {
+  background: #00b894;
+  color: white;
+}
+
+.cancel-btn {
+  background: #b2bec3;
+  color: white;
 }
 </style>

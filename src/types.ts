@@ -3,6 +3,12 @@ interface Todo {
   text: string;
   isDone: boolean;
   createdAt: number;
+  doneAt?: number;
+}
+
+interface Sort {
+  by: SortBy;
+  order: SortOrder;
 }
 
 type Filter =
@@ -12,10 +18,13 @@ type Filter =
   | 'this_month'
   | 'all';
 
-type Sort =
-  | 'date_asc'
-  | 'date_desc'
-  | 'name_asc'
-  | 'name_desc'
+type SortBy =
+  | 'creation_date'
+  | 'done_date'
+  | 'todo_text'
 
-export type { Todo, Filter, Sort };
+type SortOrder =
+  | 'asc'
+  | 'desc'
+
+export type { Todo, Sort, Filter, SortBy, SortOrder };
