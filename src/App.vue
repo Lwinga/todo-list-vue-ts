@@ -122,6 +122,7 @@ h1 {
   position: relative;
   height: 100%;
   padding: 8px 24px 8px 8px;
+  border-radius: 8px;
   border: none;
   appearance: none;
   background-color: transparent;
