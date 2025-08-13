@@ -3,9 +3,9 @@ import { computed, nextTick, useTemplateRef } from 'vue';
 import type { Sort, Filter, Todo } from './types.ts';
 import AddTodo from './AddTodo.vue';
 import TodoList from './TodoList.vue';
-import { useLocalStorage } from './composables.ts';
 import ConfirmModal from './ConfirmModal.vue';
 import { snakeToTitle } from './utils.ts';
+import { useLocalStorage } from './composables/local-storage.ts';
 
 const todos = useLocalStorage<Todo[]>('todos', []);
 const filter = useLocalStorage<Filter>('todos-filter', 'today');
