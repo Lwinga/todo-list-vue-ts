@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
-import type { Todo } from './types.ts';
 import { nextTick, ref, useTemplateRef, watch } from 'vue';
 import { useTodosStore } from './stores/todos.ts';
+import type { Todo } from './types.ts';
 
 const props = defineProps<{
   todo: Todo;
@@ -18,7 +18,7 @@ const isDone = ref(props.todo.isDone);
 
 const editInput = useTemplateRef('editInput');
 
-watch(isDone, function(value) {
+watch(isDone, function (value) {
   setDone(value);
 });
 
@@ -40,10 +40,7 @@ function saveTodo() {
 }
 
 function setDone(isDone: boolean) {
-  todosStore.editTodo(
-    props.todo.id,
-    { isDone, doneAt: isDone ? Date.now() : undefined }
-  );
+  todosStore.editTodo(props.todo.id, { isDone, doneAt: isDone ? Date.now() : undefined });
   if (editingId.value === props.todo.id) {
     cancelEditTodo();
   }
@@ -52,20 +49,35 @@ function setDone(isDone: boolean) {
 
 <template>
   <tr :class="{ done: isDone }">
-    <td><input type="checkbox" v-model="isDone"></td>
+    <td><input type="checkbox" v-model="isDone" /></td>
     <td>
-      <input type='text' class='editing' ref="editInput" v-if="editingId === todo.id" v-model="todoText"
-        @keydown.enter="saveTodo" @keydown.escape="cancelEditTodo" :disabled="isDone">
+      <input
+        type="text"
+        class="editing"
+        ref="editInput"
+        v-if="editingId === todo.id"
+        v-model="todoText"
+        @keydown.enter="saveTodo"
+        @keydown.escape="cancelEditTodo"
+        :disabled="isDone"
+      />
       <span v-else @dblclick="editTodo">{{ todo.text }}</span>
     </td>
     <td>{{ format(new Date(todo.createdAt), 'yyy/MM/dd hh:mm:ss') }}</td>
-    <td>{{ todo.doneAt !== undefined ? format(new Date(todo.doneAt), 'yyy/MM/dd hh:mm:ss') : '-' }}</td>
+    <td>
+      {{ todo.doneAt !== undefined ? format(new Date(todo.doneAt), 'yyy/MM/dd hh:mm:ss') : '-' }}
+    </td>
     <td class="actions">
       <template v-if="editingId === todo.id">
         <button class="save-btn" title="Save" @click="saveTodo" :disabled="isDone">
           <i class="fa fa-save"></i>
         </button>
-        <button class="cancel-btn" title="Cancel" v-if="editingId === todo.id" @click="cancelEditTodo">
+        <button
+          class="cancel-btn"
+          title="Cancel"
+          v-if="editingId === todo.id"
+          @click="cancelEditTodo"
+        >
           <i class="fa fa-times"></i>
         </button>
       </template>

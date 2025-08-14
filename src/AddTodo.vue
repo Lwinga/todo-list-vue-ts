@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Todo } from './types.ts';
 import { useTodosStore } from './stores/todos.ts';
+import type { Todo } from './types.ts';
 
 const emit = defineEmits<{
   (e: 'add', todo: Todo): void;
@@ -22,7 +22,12 @@ function addTodo() {
 
 <template>
   <div class="add-todo">
-    <input type="text" placeholder="Add a new todo..." v-model="todoText" @keydown.enter="addTodo">
+    <input
+      type="text"
+      placeholder="Add a new todo..."
+      v-model="todoText"
+      @keydown.enter="addTodo"
+    />
     <button @click="addTodo"><i class="fa fa-add"></i> Add</button>
   </div>
 </template>

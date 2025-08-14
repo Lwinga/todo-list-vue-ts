@@ -12,41 +12,46 @@ export const useTodosStore = defineStore('todos', () => {
     order: 'asc',
   });
 
-  const filteredTodos = computed(() => todos.value.filter(todo => {
-    const date = new Date(todo.createdAt);
-    switch(filter.value) {
-      case 'today':
-        return isToday(date);
-      case 'yesterday':
-        return isYesterday(date);
-      case 'this_week':
-        return isThisWeek(date);
-      case 'this_month':
-        return isThisMonth(date);
-      case 'all':
-        return true;
-      default:
-        const _exhaustiveCheck: never = filter.value;
-        _exhaustiveCheck;
-    }
-  }));
+  const filteredTodos = computed(() =>
+    todos.value.filter((todo) => {
+      const date = new Date(todo.createdAt);
+      switch (filter.value) {
+        case 'today':
+          return isToday(date);
+        case 'yesterday':
+          return isYesterday(date);
+        case 'this_week':
+          return isThisWeek(date);
+        case 'this_month':
+          return isThisMonth(date);
+        case 'all':
+          return true;
+        default:
+          const _exhaustiveCheck: never = filter.value;
+          _exhaustiveCheck;
+      }
+    }),
+  );
 
-  const sortedTodos = computed(() => [...filteredTodos.value].sort((a, b) => {
-    switch(sort.value.by) {
-      case 'creation_date':
-        return sort.value.order === 'asc' ? a.createdAt - b.createdAt
-          : b.createdAt - a.createdAt;
-      case 'done_date':
-        return sort.value.order === 'asc' ? (a.doneAt ?? 0) - (b.doneAt ?? 0)
-          : (b.doneAt ?? 0) - (a.doneAt ?? 0);
-      case 'todo_text':
-        return sort.value.order === 'asc' ? a.text.localeCompare(b.text)
-          : b.text.localeCompare(a.text);
-    }
-  }));
+  const sortedTodos = computed(() =>
+    [...filteredTodos.value].sort((a, b) => {
+      switch (sort.value.by) {
+        case 'creation_date':
+          return sort.value.order === 'asc' ? a.createdAt - b.createdAt : b.createdAt - a.createdAt;
+        case 'done_date':
+          return sort.value.order === 'asc'
+            ? (a.doneAt ?? 0) - (b.doneAt ?? 0)
+            : (b.doneAt ?? 0) - (a.doneAt ?? 0);
+        case 'todo_text':
+          return sort.value.order === 'asc'
+            ? a.text.localeCompare(b.text)
+            : b.text.localeCompare(a.text);
+      }
+    }),
+  );
 
   const lastId = computed(() => {
-    const maxId = Math.max(...todos.value.map(todo => todo.id));
+    const maxId = Math.max(...todos.value.map((todo) => todo.id));
     return isFinite(maxId) ? maxId : 0;
   });
 
@@ -63,16 +68,16 @@ export const useTodosStore = defineStore('todos', () => {
   }
 
   function clearTodos() {
-    const filteredIds = new Set(filteredTodos.value.map(todo => todo.id));
-    todos.value = todos.value.filter(todo => !filteredIds.has(todo.id));
+    const filteredIds = new Set(filteredTodos.value.map((todo) => todo.id));
+    todos.value = todos.value.filter((todo) => !filteredIds.has(todo.id));
   }
 
   function deleteTodo(id: number) {
-    todos.value = todos.value.filter(todo => todo.id !== id);
+    todos.value = todos.value.filter((todo) => todo.id !== id);
   }
 
   function editTodo(id: number, value: Partial<Todo>) {
-    todos.value = todos.value.map(todo => {
+    todos.value = todos.value.map((todo) => {
       if (todo.id === id) {
         return { ...todo, ...value };
       }
@@ -100,5 +105,5 @@ export const useTodosStore = defineStore('todos', () => {
     deleteTodo,
     editTodo,
     updateSort,
-  }
+  };
 });

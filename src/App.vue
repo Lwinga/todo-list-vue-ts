@@ -1,32 +1,26 @@
 <script setup lang="ts">
-import { computed, nextTick } from 'vue';
-import type { Filter, Todo } from './types.ts';
-import AddTodo from './AddTodo.vue';
-import TodoList from './TodoList.vue';
-import ConfirmModal from './ConfirmModal.vue';
-import { snakeToTitle } from './utils.ts';
-import { useTodosStore } from './stores/todos.ts';
 import { storeToRefs } from 'pinia';
+import { computed, nextTick } from 'vue';
+import AddTodo from './AddTodo.vue';
+import ConfirmModal from './ConfirmModal.vue';
+import { useTodosStore } from './stores/todos.ts';
+import TodoList from './TodoList.vue';
+import type { Filter, Todo } from './types.ts';
+import { snakeToTitle } from './utils.ts';
 
 const todosStore = useTodosStore();
 const { filter, filteredTodos } = storeToRefs(todosStore);
 const { clearTodos } = todosStore;
 
 const doneTodos = computed(() => {
-  return filteredTodos.value.filter(todo => todo.isDone).length;
+  return filteredTodos.value.filter((todo) => todo.isDone).length;
 });
 
-const filters = new Set<Filter>([
-  'today',
-  'yesterday',
-  'this_week',
-  'this_month',
-  'all'
-]);
+const filters = new Set<Filter>(['today', 'yesterday', 'this_week', 'this_month', 'all']);
 
 async function processAddTodo(todo: Todo) {
   await nextTick(); // Wait until filteredTodos has been updated
-  const filteredIds = new Set(filteredTodos.value.map(todo => todo.id));
+  const filteredIds = new Set(filteredTodos.value.map((todo) => todo.id));
   if (!filteredIds.has(todo.id)) {
     // Avoid frustration to users when they can't see the added todo
     filter.value = 'today';
@@ -73,7 +67,7 @@ h1 {
   background: white;
   padding: 10px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .controls {
@@ -84,7 +78,8 @@ h1 {
   gap: 10px;
 }
 
-.filter-select, .clear-btn {
+.filter-select,
+.clear-btn {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;

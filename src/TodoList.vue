@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { SortBy } from './types.ts';
-import TodoItem from './TodoItem.vue';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue';
 import { useTodosStore } from './stores/todos.ts';
-import { storeToRefs } from 'pinia';
+import TodoItem from './TodoItem.vue';
+import type { SortBy } from './types.ts';
 
 const todosStore = useTodosStore();
 const { sort, sortedTodos } = storeToRefs(todosStore);
@@ -13,10 +13,10 @@ const editingId = ref(0);
 
 function sortClass(by: SortBy) {
   return {
-    'asc': sort.value.by === by && sort.value.order === 'asc',
-    'desc': sort.value.by === by && sort.value.order === 'desc',
-  }
-};
+    asc: sort.value.by === by && sort.value.order === 'asc',
+    desc: sort.value.by === by && sort.value.order === 'desc',
+  };
+}
 </script>
 
 <template>
@@ -73,7 +73,8 @@ th i {
   opacity: 0.5;
 }
 
-th.asc i:first-child, th.desc i:last-child {
+th.asc i:first-child,
+th.desc i:last-child {
   opacity: 1;
 }
 </style>
