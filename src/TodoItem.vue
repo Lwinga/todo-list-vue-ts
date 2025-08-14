@@ -2,16 +2,14 @@
 import { format } from 'date-fns';
 import type { Todo } from './types.ts';
 import { nextTick, ref, useTemplateRef, watch } from 'vue';
+import { useTodosStore } from './stores/todos.ts';
 
 const props = defineProps<{
   todo: Todo;
 }>();
 
-const emit = defineEmits<{
-  (e: 'delete', id: number): void;
-  (e: 'edit', id: number, text: string): void;
-  (e: 'done', id: number, done: boolean): void;
-}>();
+const todosStore = useTodosStore();
+const { deleteTodo } = todosStore;
 
 const editingId = defineModel<number>({ required: true });
 
@@ -29,10 +27,6 @@ function cancelEditTodo() {
   todoText.value = '';
 }
 
-function deleteTodo() {
-  emit('delete', props.todo.id);
-}
-
 function editTodo() {
   if (props.todo.isDone) return;
   todoText.value = props.todo.text;
@@ -41,12 +35,15 @@ function editTodo() {
 }
 
 function saveTodo() {
-  emit('edit', props.todo.id, todoText.value);
+  todosStore.editTodo(props.todo.id, { text: todoText.value });
   cancelEditTodo();
 }
 
 function setDone(isDone: boolean) {
-  emit('done', props.todo.id, isDone);
+  todosStore.editTodo(
+    props.todo.id,
+    { isDone, doneAt: isDone ? Date.now() : undefined }
+  );
   if (editingId.value === props.todo.id) {
     cancelEditTodo();
   }
@@ -76,7 +73,7 @@ function setDone(isDone: boolean) {
         <button class="edit-btn" title="Edit" @click="editTodo" :disabled="isDone">
           <i class="fa fa-edit"></i>
         </button>
-        <button class="delete-btn" title="Delete" @click="deleteTodo">
+        <button class="delete-btn" title="Delete" @click="deleteTodo(todo.id)">
           <i class="fa fa-trash"></i>
         </button>
       </template>

@@ -1,23 +1,19 @@
 <script setup lang="ts">
-import { computed, nextTick, useTemplateRef } from 'vue';
-import type { Sort, Filter, Todo } from './types.ts';
+import { computed, nextTick } from 'vue';
+import type { Filter, Todo } from './types.ts';
 import AddTodo from './AddTodo.vue';
 import TodoList from './TodoList.vue';
 import ConfirmModal from './ConfirmModal.vue';
 import { snakeToTitle } from './utils.ts';
-import { useLocalStorage } from './composables/local-storage.ts';
+import { useTodosStore } from './stores/todos.ts';
+import { storeToRefs } from 'pinia';
 
-const todos = useLocalStorage<Todo[]>('todos', []);
-const filter = useLocalStorage<Filter>('todos-filter', 'today');
-const sort = useLocalStorage<Sort>('todos-sort', {
-  by: 'creation_date',
-  order: 'asc',
-});
-
-const todoList = useTemplateRef<InstanceType<typeof TodoList>>('todo-list');
+const todosStore = useTodosStore();
+const { filter, filteredTodos } = storeToRefs(todosStore);
+const { clearTodos } = todosStore;
 
 const doneTodos = computed(() => {
-  return todoList.value?.filteredTodos.filter(todo => todo.isDone).length ?? 0;
+  return filteredTodos.value.filter(todo => todo.isDone).length;
 });
 
 const filters = new Set<Filter>([
@@ -28,20 +24,9 @@ const filters = new Set<Filter>([
   'all'
 ]);
 
-function clearTodos() {
-  const filteredIds = getFilteredIds();
-  todos.value = todos.value.filter(todo => !filteredIds.has(todo.id));
-}
-
-function getFilteredIds(): Set<number> {
-  return new Set(todoList.value?.filteredTodos.map(todo => {
-    return todo.id
-  }) ?? [] as number[]);
-}
-
 async function processAddTodo(todo: Todo) {
   await nextTick(); // Wait until filteredTodos has been updated
-  const filteredIds = getFilteredIds();
+  const filteredIds = new Set(filteredTodos.value.map(todo => todo.id));
   if (!filteredIds.has(todo.id)) {
     // Avoid frustration to users when they can't see the added todo
     filter.value = 'today';
@@ -52,7 +37,7 @@ async function processAddTodo(todo: Todo) {
 <template>
   <div class="container">
     <h1>TODO LIST</h1>
-    <AddTodo v-model="todos" @add="processAddTodo" />
+    <AddTodo @add="processAddTodo" />
     <div class="controls">
       <label class="filter-select">
         <span>Filter</span>
@@ -68,9 +53,9 @@ async function processAddTodo(todo: Todo) {
         </template>
       </ConfirmModal>
     </div>
-    <TodoList v-model="todos" v-model:sort="sort" :filter ref="todo-list" />
+    <TodoList />
     <div class="stats">
-      <span>Total: {{ todoList?.filteredTodos.length ?? 0 }}</span> | <span>Done: {{ doneTodos }}</span>
+      <span>Total: {{ filteredTodos.length }}</span> | <span>Done: {{ doneTodos }}</span>
     </div>
   </div>
 </template>
